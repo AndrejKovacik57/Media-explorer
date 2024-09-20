@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace WpfApp1;
 using System.Windows.Media.Imaging;
@@ -59,7 +61,7 @@ public partial class TilesPage : Page
                 bitmap.UriSource = new Uri(imageFile, UriKind.Absolute);  // Load the first image
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
-                Console.WriteLine($"tags {tags} episodeName {episodeName} episodeNum {episodeNum}");
+                
                 VideoTile videoTile = new VideoTile(bitmap, tags, episodeName, episodeNum, videoFiles);
                 videoTiles.Add(videoTile);
             }
@@ -135,4 +137,6 @@ public partial class TilesPage : Page
             // Perform other logic like navigating to a new page or displaying episodes
         }
     }
+
+
 }

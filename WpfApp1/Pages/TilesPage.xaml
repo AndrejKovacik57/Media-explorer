@@ -6,10 +6,59 @@
       xmlns:local="clr-namespace:WpfApp1"
       mc:Ignorable="d"
       Title="TilesPage">
+ <!-- Reference the ResourceDictionary -->
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Dictionary1.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- DataTemplate for TilesPage that includes the Button -->
+            <DataTemplate x:Key="TilesPageItemTemplate">
+                <Border Padding="5" Margin="5" CornerRadius="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Include the reusable template -->
+                        <ContentControl Content="{Binding}" 
+                                        ContentTemplate="{StaticResource ImageTextContentTemplate}" />
+
+                        <!-- Add the Button -->
+                        <Button Content="Show Episodes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                BorderThickness="0" Background="#501865" Foreground="#cecccd" FontSize="18"
+                                Padding="0, 5"
+                                Grid.Row="1" Click="ShowEpisodes_OnClick" CommandParameter="{Binding}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Name="border" Background="{TemplateBinding Background}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" 
+                                            CornerRadius="3">
+                                        <!-- Use Margin instead of Padding -->
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                          Margin="{TemplateBinding Padding}" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#291040"/> <!-- Darker color on hover -->
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Page.Resources>
+
     <Grid Name="GrdTiles">
         <!-- ScrollViewer added to enable scrolling -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <ItemsControl Name="ImageItemsControl" ItemsSource="{Binding}">
+            <ItemsControl Name="ImageItemsControl" ItemsSource="{Binding }">
                 <!-- Use a WrapPanel to arrange items in rows and columns -->
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -17,54 +66,9 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 
+                <!-- Use the TilesPageItemTemplate that includes the button -->
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Padding="5" Margin="5" CornerRadius="5">
-                            <Grid Background="#3f0e65" Width="400" Height="375">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                                           <!-- Image on the left -->
-                                <Image Source="{Binding Image}" Width="200" Height="300" Grid.Row="0" Grid.Column="0" Margin="10"
-                                       d:DataContext="{d:DesignInstance }" />
-                                
-                                <!-- Text information on the right -->
-                                <StackPanel Grid.Row="0" Grid.Column="1" Margin="2" Width="150" Height="300">
-                                    <TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontWeight="Bold" FontSize="16"  Foreground=" Azure"
-                                               d:DataContext="{d:DesignInstance }" />
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Episodes: "  FontSize="14" FontWeight="Bold" Foreground="MediumOrchid" />
-                                        <TextBlock Text="{Binding EpisodeNumber}" FontSize="14" FontWeight="Bold" Foreground="#cecccd"
-                                                   d:DataContext="{d:DesignInstance }" />
-                                    </StackPanel>
-                                    <!-- Use WrapPanel for tags to allow wrapping to the next line -->
-                                    <ItemsControl ItemsSource="{Binding Tags}" d:DataContext="{d:DesignInstance }">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Background="#501865" CornerRadius="3" Margin="2" Padding="2">
-                                                    <TextBlock Text="{Binding}" FontSize="12" Foreground="#cecccd"/>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                                <Button Content="Show Episodes" Width="100" Height="25" Margin="5" HorizontalAlignment="Center" 
-                                        Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="ShowEpisodes_OnClick"  
-                                        CommandParameter="{Binding}"/>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
+                    <StaticResource ResourceKey="TilesPageItemTemplate"/>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>

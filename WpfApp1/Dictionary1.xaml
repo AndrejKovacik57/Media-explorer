@@ -1,4 +1,51 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+﻿<ResourceDictionary  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     mc:Ignorable="d">
+  <!-- Reusable DataTemplate for Image and StackPanel -->
+    <DataTemplate x:Key="ImageTextContentTemplate">
+        <Grid Background="#3f0e65" Width="400" Height="375">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Image on the left -->
+            <Image Source="{Binding Image}" Width="200" Height="300" Grid.Row="0" Grid.Column="0" Margin="10"
+                   d:DataContext="{d:DesignInstance }" />
+
+            <!-- Text information on the right -->
+            <StackPanel Grid.Row="0" Grid.Column="1" Margin="2" Width="150" HorizontalAlignment="Stretch">
+                <TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontWeight="Bold" FontSize="16"  Foreground="Azure"
+                           d:DataContext="{d:DesignInstance }" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Episodes: "  FontSize="14" FontWeight="Bold" Foreground="MediumOrchid" />
+                    <TextBlock Text="{Binding EpisodeNumber}" FontSize="14" FontWeight="Bold" Foreground="#cecccd"
+                               d:DataContext="{d:DesignInstance }" />
+                </StackPanel>
+                <!-- Tags section using a WrapPanel -->
+                <ItemsControl ItemsSource="{Binding Tags}" d:DataContext="{d:DesignInstance }">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#501865" CornerRadius="3" Margin="2" Padding="2">
+                                <TextBlock Text="{Binding}" FontSize="12" Foreground="#cecccd"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

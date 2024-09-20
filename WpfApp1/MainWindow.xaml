@@ -5,5 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         Title="MainWindow" Height="1200" Width="1350" Background="#FF18002F">
         <!-- Frame to host the Page -->
-        <Frame Name="TilesFrame" Source="TilesPage.xaml" />
+        <Frame Name="TilesFrame" Source="Pages/TilesPage.xaml" />
 </Window>
