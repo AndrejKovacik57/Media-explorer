@@ -49,10 +49,18 @@ public partial class EpisodesPage : Page, INotifyPropertyChanged
         DataContext = this;
 
     }
-
-    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    private void PlayVideo_Click(object sender, RoutedEventArgs e)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        // Get the VideoPath from the Button's Tag property
+        Button button = sender as Button;
+        if (button != null)
+        {
+            string videoPath = button.Tag as string;
+            if (!string.IsNullOrEmpty(videoPath))
+            {
+                Console.WriteLine("Playing video " + videoPath);
+            }
+        }
     }
 
     private void  LoadPreviews()
@@ -64,4 +72,8 @@ public partial class EpisodesPage : Page, INotifyPropertyChanged
         }
     }
    
+    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

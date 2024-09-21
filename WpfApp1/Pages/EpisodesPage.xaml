@@ -12,7 +12,9 @@
                 <ResourceDictionary Source="../Dictionary1.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Key="TilesPageItemTemplate">
-                <Border Padding="5" Margin="5" CornerRadius="5">
+                <Border Padding="5" 
+                        Margin="5" 
+                        CornerRadius="5">
                         <ContentControl />
                 </Border>
             </DataTemplate>
@@ -25,17 +27,61 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <ContentControl  Content="{Binding CurrentItem}" ContentTemplate="{StaticResource ImageTextContentTemplate}" Height="375"/>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding VideoPreviews}">
+        <ContentControl  
+            Content="{Binding CurrentItem}" 
+            ContentTemplate="{StaticResource ImageTextContentTemplate}" 
+            Height="375"/>
+        <ItemsControl 
+            Grid.Row="1" 
+            ItemsSource="{Binding VideoPreviews}"
+            Margin="0,15,0,0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical" Margin="10">
-                        <Image Source="{Binding Preview}" Width="200" Height="100" d:DataContext="{d:DesignData }" />
-
-                        <TextBlock Text="{Binding FileName}" FontWeight="Bold" Foreground="Azure" Margin="5,0,0,0" d:DataContext="{d:DesignData}" />
+                    <StackPanel 
+                        Orientation="Vertical" Margin="10">
+                        <TextBlock 
+                            Text="{Binding FileName}" 
+                            FontSize="18" Background="#501865"
+                            Padding="10, 10,10,5" 
+                            Foreground="Azure" />
+                        <Button 
+                            Content="Play" 
+                            Click="PlayVideo_Click" 
+                            Tag="{Binding VideoPath}" 
+                            Padding="5, 10,10,10" 
+                            FontSize="18"
+                            Background="#501865"
+                            BorderThickness="0"
+                            Foreground="Azure"
+                            >
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Name="border" Background="{TemplateBinding Background}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" >
+                                        <!-- Use Margin instead of Padding -->
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                          Margin="{TemplateBinding Padding}" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#291040"/> <!-- Darker color on hover -->
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>    
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
     </Grid>
 </Page>
