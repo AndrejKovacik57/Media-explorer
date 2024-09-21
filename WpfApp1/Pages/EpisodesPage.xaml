@@ -5,8 +5,37 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:WpfApp1"
       mc:Ignorable="d"
-      Title="EpisodesPage" Height="450" Width="800">
-    <Grid>
+      Title="EpisodesPage" >
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Dictionary1.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate x:Key="TilesPageItemTemplate">
+                <Border Padding="5" Margin="5" CornerRadius="5">
+                        <ContentControl />
+                </Border>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Name="GrdTilesEpisodes">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         
+        <ContentControl  Content="{Binding CurrentItem}" ContentTemplate="{StaticResource ImageTextContentTemplate}" Height="375"/>
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding VideoPreviews}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <Image Source="{Binding Preview}" Width="200" Height="100" d:DataContext="{d:DesignData }" />
+
+                        <TextBlock Text="{Binding FileName}" FontWeight="Bold" Foreground="Azure" Margin="5,0,0,0" d:DataContext="{d:DesignData}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Page>

@@ -24,7 +24,7 @@
 
                         <!-- Include the reusable template -->
                         <ContentControl Content="{Binding}" 
-                                        ContentTemplate="{StaticResource ImageTextContentTemplate}" />
+                                        ContentTemplate="{StaticResource ImageTextContentTemplate}" Width="400" Height="375"/>
 
                         <!-- Add the Button -->
                         <Button Content="Show Episodes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

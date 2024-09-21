@@ -4,8 +4,8 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      mc:Ignorable="d">
   <!-- Reusable DataTemplate for Image and StackPanel -->
-    <DataTemplate x:Key="ImageTextContentTemplate">
-        <Grid Background="#3f0e65" Width="400" Height="375">
+    <DataTemplate x:Key="ImageTextContentTemplate" >
+        <Grid Background="#3f0e65">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -21,9 +21,9 @@
                    d:DataContext="{d:DesignInstance }" />
 
             <!-- Text information on the right -->
-            <StackPanel Grid.Row="0" Grid.Column="1" Margin="2" Width="150" HorizontalAlignment="Stretch">
+            <StackPanel Grid.Row="0" Grid.Column="1"  Margin="2">
                 <TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontWeight="Bold" FontSize="16"  Foreground="Azure"
-                           d:DataContext="{d:DesignInstance }" />
+                           Margin="0,15,0,0" />
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Episodes: "  FontSize="14" FontWeight="Bold" Foreground="MediumOrchid" />
                     <TextBlock Text="{Binding EpisodeNumber}" FontSize="14" FontWeight="Bold" Foreground="#cecccd"

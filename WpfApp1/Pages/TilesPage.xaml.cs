@@ -69,7 +69,7 @@ public partial class TilesPage : Page
             
         }
         // Bind the images to the ItemsControl
-        ImageItemsControl.ItemsSource = videoTiles;
+        DataContext = videoTiles;
     }
 
     private List<string> GetTagsFromPath(string path)
@@ -121,20 +121,21 @@ public partial class TilesPage : Page
     private void ShowEpisodes_OnClick(object sender, RoutedEventArgs e)
     {
         MainWindow mainWindow = (MainWindow)Application.Current.MainWindow ?? throw new InvalidOperationException("MainWindow is null.");
-        
-        mainWindow.TilesFrame.Navigate(new EpisodesPage());
+    
         // Get the button that was clicked
         var button = sender as Button;
 
         // Retrieve the bound data object (which is passed through CommandParameter)
-        var currentItem = button?.CommandParameter;
+        var currentItem = button?.CommandParameter as VideoTile;
 
         if (currentItem != null)
         {
-            // You can now use currentItem to access the properties of the bound data object
-            MessageBox.Show($"Episodes for: {((VideoTile)currentItem).Title}");
-        
-            // Perform other logic like navigating to a new page or displaying episodes
+            // Navigate to EpisodesPage and pass the currentItem (VideoTile)
+            mainWindow.TilesFrame.Navigate(new EpisodesPage(currentItem));
+        }
+        else
+        {
+            MessageBox.Show("No item selected.");
         }
     }
 
