@@ -54,7 +54,7 @@
                         <Button 
                             Content="Play" 
                             Click="PlayVideo_Click" 
-                            Tag="{Binding VideoPath}" 
+                            Tag="{Binding }" 
                             Padding="5, 10,10,10" 
                             FontSize="18"
                             Background="#501865"

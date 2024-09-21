@@ -14,13 +14,17 @@ public class VideoPreview
     private int Width { get;  set; }
     private int Height { get;  set; }
     
+    public string[] VideoPaths { get; private set; }
+    
+    public (string VideoPath, string[] VideoPaths) VideoData { get; set; }
 
-    public VideoPreview(string videoPath, int width, int height)
+    public VideoPreview(string videoPath, int width, int height, string[] videoPaths)
     {
         VideoPath = videoPath;
         FileName = GetNameFromPath();
         Width = width;
         Height = height;
+        VideoPaths = videoPaths;
 
     }
 

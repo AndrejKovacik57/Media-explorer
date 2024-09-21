@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using WpfApp1.Models;
+using WpfApp1.Pages;
 
 namespace WpfApp1;
 
@@ -51,14 +51,21 @@ public partial class EpisodesPage : Page, INotifyPropertyChanged
     }
     private void PlayVideo_Click(object sender, RoutedEventArgs e)
     {
+        MainWindow mainWindow = (MainWindow)Application.Current.MainWindow ?? throw new InvalidOperationException("MainWindow is null.");
         // Get the VideoPath from the Button's Tag property
         Button button = sender as Button;
         if (button != null)
         {
-            string videoPath = button.Tag as string;
-            if (!string.IsNullOrEmpty(videoPath))
+            VideoPreview videoData = (VideoPreview)button.Tag;
+            
+            if (!string.IsNullOrEmpty(videoData.VideoPath) && videoData.VideoPaths.Length > 0)
             {
-                Console.WriteLine("Playing video " + videoPath);
+                // Navigate to EpisodesPage and pass the currentItem (VideoTile)
+                mainWindow.TilesFrame.Navigate(new VideoPlayer(videoData.VideoPath, videoData.VideoPaths));
+            } 
+            else
+            {
+                 MessageBox.Show("No video files");
             }
         }
     }
@@ -67,7 +74,7 @@ public partial class EpisodesPage : Page, INotifyPropertyChanged
     {
         foreach (string path in CurrentItem.VideoPaths)
         {
-            VideoPreview preview = new VideoPreview(path, 200, 100);
+            VideoPreview preview = new VideoPreview(path, 200, 100, CurrentItem.VideoPaths);
             VideoPreviews.Add(preview);
         }
     }

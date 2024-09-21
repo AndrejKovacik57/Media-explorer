@@ -15,10 +15,10 @@ public partial class TilesPage : Page
     public TilesPage()
     {
         InitializeComponent();
-        LoadImagesFromSubfolders([@"E:\media\videa\hentaimama\2D", @"E:\media\videa\hentaimama\3D"]);
+        LoadImagesFromSubfolders([Environment.GetEnvironmentVariable("path1"), Environment.GetEnvironmentVariable("path2") ]);
 
     }
-        private void LoadImagesFromSubfolders(List<string> rootFolderPaths)
+    private void LoadImagesFromSubfolders(List<string> rootFolderPaths)
     {
         List<VideoTile> videoTiles = [];
         foreach (string rootFolderPath in rootFolderPaths)
