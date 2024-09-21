@@ -24,12 +24,17 @@ namespace WpfApp1.Pages
             SelectedVideoPath = videoPath;
             currentIndex = Array.IndexOf(VideoPaths, SelectedVideoPath);
             MediaPlayer.Source = new Uri(SelectedVideoPath, UriKind.Absolute);
-
+            MediaPlayer.Play(); // Add this line to start playing automatically.
+            MediaPlayer.Volume = 0.1f;
+            PlayPauseButton.Content = "Pause";
+            isPlaying = true;
+            
             // Create and start the timer to update the slider
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500); // Update every half-second
             timer.Tick += Timer_Tick;
             timer.Start();
+            MediaPlayer.MediaEnded += MediaPlayer_MediaEnded; // Subscribe to the MediaEnded event
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -43,7 +48,19 @@ namespace WpfApp1.Pages
                 TotalTimeLabel.Content = MediaPlayer.NaturalDuration.TimeSpan.ToString(@"hh\:mm\:ss");
             }
         }
-
+        private void MediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            if (ReplayCheckBox.IsChecked == true)
+            {
+                MediaPlayer.Position = TimeSpan.Zero; // Reset to the start
+                MediaPlayer.Play(); // Replay the video
+            }
+            else
+            {
+                PlayPauseButton.Content = "Play";
+                isPlaying = false;
+            }
+        }
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             if (isPlaying)

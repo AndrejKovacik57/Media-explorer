@@ -6,6 +6,27 @@
         <MediaElement Name="MediaPlayer" LoadedBehavior="Manual" UnloadedBehavior="Stop" />
         
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Background="Gray">
+             <!-- Add mouse event triggers -->
+            <!-- <StackPanel.Triggers> -->
+            <!--     <EventTrigger RoutedEvent="MouseEnter"> -->
+            <!--         <BeginStoryboard> -->
+            <!--             <Storyboard> -->
+            <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"> -->
+            <!--                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" /> -->
+            <!--                 </ObjectAnimationUsingKeyFrames> -->
+            <!--             </Storyboard> -->
+            <!--         </BeginStoryboard> -->
+            <!--     </EventTrigger> -->
+            <!--     <EventTrigger RoutedEvent="MouseLeave"> -->
+            <!--         <BeginStoryboard> -->
+            <!--             <Storyboard> -->
+            <!--                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"> -->
+            <!--                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" /> -->
+            <!--                 </ObjectAnimationUsingKeyFrames> -->
+            <!--             </Storyboard> -->
+            <!--         </BeginStoryboard> -->
+            <!--     </EventTrigger> -->
+            <!-- </StackPanel.Triggers> -->
             <!-- Timeline with labels -->
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Label Name="CurrentTimeLabel" Content="00:00:00" VerticalAlignment="Center"/>
@@ -22,6 +43,7 @@
 
             <!-- Control buttons -->
             <StackPanel Orientation="Horizontal" Margin="5">
+                
                 <!-- Play/Pause Button -->
                 <Button Name="PlayPauseButton" Content="Pause" Click="PlayPauseButton_Click" Width="80" Height="30" Margin="5"/>
                 
@@ -33,11 +55,26 @@
                 
                 <!-- Volume Control -->
                 <Label Content="Volume:" VerticalAlignment="Center" Margin="5"/>
-                <Slider Name="VolumeSlider" Minimum="0" Maximum="1" ValueChanged="VolumeSlider_ValueChanged" Width="100" Margin="5" Value="0.5"/>
+                <Slider Name="VolumeSlider" Minimum="0" Maximum="1" ValueChanged="VolumeSlider_ValueChanged" Width="100" Margin="5" Value="0.1"/>
                 
                 <!-- Fullscreen Button -->
                 <Button Name="FullScreenButton" Content="Full Screen" Click="FullScreenButton_Click" Width="100" Height="30" Margin="5"/>
+                <CheckBox x:Name="ReplayCheckBox" Content="Replay" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
+
             </StackPanel>
         </StackPanel>
+        <!-- <Grid Background="Transparent"   Height="100" > -->
+        <!--     <Grid.Triggers> -->
+        <!--         <EventTrigger RoutedEvent="MouseEnter"> -->
+        <!--             <BeginStoryboard> -->
+        <!--                 <Storyboard> -->
+        <!--                     <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="MyStackPanel"> -->
+        <!--                         <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" /> -->
+        <!--                     </ObjectAnimationUsingKeyFrames> -->
+        <!--                 </Storyboard> -->
+        <!--             </BeginStoryboard> -->
+        <!--         </EventTrigger> -->
+        <!--     </Grid.Triggers> -->
+        <!-- </Grid> -->
     </Grid>
 </Page>
