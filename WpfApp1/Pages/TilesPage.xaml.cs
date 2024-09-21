@@ -1,17 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace WpfApp1;
 using System.Windows.Media.Imaging;
-using WpfApp1.Models;
+using Models;
 using System.IO;
 
 
 public partial class TilesPage : Page
 {
     private VideoTile selectedVideoTile;
+    private VideoTile[] AllVideoTiles;
+    private List<VideoTile>? FilteredVideoTiles;
+    
     public TilesPage()
     {
         InitializeComponent();
@@ -69,6 +71,7 @@ public partial class TilesPage : Page
             
         }
         // Bind the images to the ItemsControl
+        AllVideoTiles = videoTiles.ToArray();
         DataContext = videoTiles;
     }
 
@@ -139,5 +142,103 @@ public partial class TilesPage : Page
         }
     }
 
+    private void OnSearchTextChanged(object sender, KeyEventArgs keyEventArgs)
+    {
+        TextBox searchBar = sender as TextBox;
+        string searchText = searchBar?.Text;
+
+        if (string.IsNullOrEmpty(searchText))
+        {
+            // If search text is empty, display all tiles
+            DataContext = AllVideoTiles;
+            return;
+        }
+
+        FilteredVideoTiles = new List<VideoTile>();
+
+        string tagString;
+        string[] commands = searchText.Split(' ');
+
+        foreach (var command in commands)
+        {
+            if (!string.IsNullOrEmpty(command))
+            {
+                Console.WriteLine($"command = {command}");
+                if (command.StartsWith("+"))
+                {
+                    Console.WriteLine("plus");
+                    tagString = command.Substring(1).ToLower();
+                    tagString = tagString.Replace("\"", "").Replace("'", "");
+                    
+                    Console.WriteLine($"tagString {tagString}");
+                    if (!string.IsNullOrEmpty(tagString))
+                    {
+                        if (!FilteredVideoTiles.Any())
+                        {
+                            var filteredTiles = AllVideoTiles
+                                .Where(videoTileIter =>
+                                    videoTileIter.Tags.Any(tag => tag.ToLower().Contains(tagString)))
+                                .ToList();
+                            FilteredVideoTiles.AddRange(filteredTiles);
+                        }
+                        else
+                        {
+                            var filteredTiles = FilteredVideoTiles
+                                .Where(videoTileIter =>
+                                    videoTileIter.Tags.Any(tag => tag.ToLower().Contains(tagString)))
+                                .ToList();
+                            FilteredVideoTiles = filteredTiles;
+                        }
+                    }
+                }
+                else if (command.StartsWith("-"))
+                {
+                    tagString = command.Substring(1).ToLower();
+                    tagString = tagString.Replace("\"", "").Replace("'", "");
+                    Console.WriteLine("minus");
+                    Console.WriteLine($"tagString {tagString}");
+                    if (!string.IsNullOrEmpty(tagString))
+                    {
+                        if (!FilteredVideoTiles.Any())
+                        {
+                            var filteredTiles = AllVideoTiles
+                                .Where(videoTileIter =>
+                                    videoTileIter.Tags.All(tag => !tag.ToLower().Contains(tagString)))
+                                .ToList();
+                            FilteredVideoTiles.AddRange(filteredTiles);
+                        }
+                        else
+                        {
+                            var filteredTiles = FilteredVideoTiles
+                                .Where(videoTileIter =>
+                                    videoTileIter.Tags.All(tag => !tag.ToLower().Contains(tagString)))
+                                .ToList();
+                            FilteredVideoTiles = filteredTiles;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!FilteredVideoTiles.Any())
+                    {
+                        var filteredTiles = AllVideoTiles
+                            .Where(videoTileIter => videoTileIter.Title.ToLower().Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
+                        FilteredVideoTiles.AddRange(filteredTiles);
+                    }
+                    else
+                    {
+                        searchText = searchText.ToLower();
+                        var filteredTiles = FilteredVideoTiles
+                            .Where(videoTileIter => videoTileIter.Title.ToLower().Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
+                        FilteredVideoTiles = filteredTiles;
+                    }
+                }
+            }
+        }
+        // Update the data context with the filtered tiles
+        DataContext = FilteredVideoTiles;
+    }
 
 }

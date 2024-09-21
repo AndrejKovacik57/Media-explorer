@@ -55,9 +55,11 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Name="GrdTiles">
+    <DockPanel>
         <!-- ScrollViewer added to enable scrolling -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <TextBox Grid.Row="0" Name="SearchBar" DockPanel.Dock="Top" FontSize="20" Padding="0,5"
+                 VerticalAlignment="Top" Width="Auto"  KeyUp="OnSearchTextChanged"/>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl Name="ImageItemsControl" ItemsSource="{Binding }">
                 <!-- Use a WrapPanel to arrange items in rows and columns -->
                 <ItemsControl.ItemsPanel>
@@ -72,5 +74,5 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-    </Grid>
+    </DockPanel>
 </Page>
