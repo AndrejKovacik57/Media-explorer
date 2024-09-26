@@ -1,13 +1,14 @@
-﻿<Page x:Class="WpfApp1.TilesPage"
+﻿<models:CustomBasePage x:Class="WpfApp1.TilesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:WpfApp1"
+      xmlns:models="clr-namespace:WpfApp1.Models"
       mc:Ignorable="d"
       Title="TilesPage">
  <!-- Reference the ResourceDictionary -->
-    <Page.Resources>
+    <models:CustomBasePage.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Dictionary1.xaml" />
@@ -24,7 +25,12 @@
 
                         <!-- Include the reusable template -->
                         <ContentControl Content="{Binding}" 
-                                        ContentTemplate="{StaticResource ImageTextContentTemplate}" Width="400" Height="375"/>
+                                        ContentTemplate="{StaticResource ImageTextContentTemplate}" 
+                                        Width="400" 
+                                        Height="375"
+                                        Grid.Row="0"
+                                        Loaded="TilesContentControl_Loaded"
+                                        />
 
                         <!-- Add the Button -->
                         <Button Content="Show Episodes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -53,7 +59,7 @@
                 </Border>
             </DataTemplate>
         </ResourceDictionary>
-    </Page.Resources>
+    </models:CustomBasePage.Resources>
 
     <DockPanel>
         <!-- ScrollViewer added to enable scrolling -->
@@ -75,4 +81,4 @@
             </ItemsControl>
         </ScrollViewer>
     </DockPanel>
-</Page>
+</models:CustomBasePage>

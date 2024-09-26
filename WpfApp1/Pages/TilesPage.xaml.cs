@@ -1,14 +1,17 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Media;
 
 namespace WpfApp1;
-using System.Windows.Media.Imaging;
 using Models;
-using System.IO;
 
 
-public partial class TilesPage : Page
+
+public partial class TilesPage : CustomBasePage
 {
     private VideoTile selectedVideoTile;
     private VideoTile[] AllVideoTiles;
@@ -17,7 +20,9 @@ public partial class TilesPage : Page
     public TilesPage()
     {
         InitializeComponent();
-        LoadImagesFromSubfolders([Environment.GetEnvironmentVariable("path1"), Environment.GetEnvironmentVariable("path2") ]);
+        Console.WriteLine($"1 {Environment.GetEnvironmentVariable("path1")}");
+        Console.WriteLine($"2 {Environment.GetEnvironmentVariable("path1")}");
+        LoadImagesFromSubfolders([Environment.GetEnvironmentVariable("path1"), Environment.GetEnvironmentVariable("path2")]);
 
     }
     private void LoadImagesFromSubfolders(List<string> rootFolderPaths)
@@ -31,19 +36,25 @@ public partial class TilesPage : Page
                 MessageBox.Show("Directory does not exist.");
                 continue;
             }
-
+            Console.WriteLine($"Processing root folder: {rootFolderPath}");
             // Get all subfolders in the main directory
             string[] subFolders = Directory.GetDirectories(rootFolderPath);
 
             foreach (var folder in subFolders)
             {
+                Console.WriteLine($"Processing folder: {folder}");
                 // Get the first image file in the folder
                 string imageFile = Directory
                     .GetFiles(folder, "*.*", SearchOption.TopDirectoryOnly)
                     .FirstOrDefault(file => file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
                                             file.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
                                             file.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException();  // Selects the first matching image file or null if none found
-
+                
+                if (imageFile == null)
+                {
+                    Console.WriteLine($"Skipping folder {folder}: No valid image file found.");
+                    continue; // Skip folder if no valid image file is found
+                }
                 // Get the first video file in the folder
                 string[] videoFiles = Directory.GetFiles(folder, "*.*", SearchOption.TopDirectoryOnly)
                     .Where(file => file.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
@@ -52,11 +63,25 @@ public partial class TilesPage : Page
                                    file.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
                                    file.EndsWith(".wmv", StringComparison.OrdinalIgnoreCase))
                     .ToArray();
-                
+                if (videoFiles.Length == 0)
+                {
+                    Console.WriteLine($"Skipping folder {folder}: No valid video files found.");
+                    continue; // Skip folder if no valid video files are found
+                }
                 var output = GetNameAndEpisodes($"{folder}\\tile.txt", videoFiles.Length);
+                if (string.IsNullOrEmpty(output.name) || output.episodes == 0)
+                {
+                    Console.WriteLine($"Skipping folder {folder}: Missing or invalid episode details.");
+                    continue; // Skip folder if episode details are missing
+                }
                 string episodeName = output.name;
                 int episodeNum = output.episodes;
                 List<string> tags = GetTagsFromPath($"{folder}\\tags.txt");
+                if (!tags.Any())
+                {
+                    Console.WriteLine($"Skipping folder {folder}: Missing or invalid tag details.");
+                    continue; // Skip folder if episode details are missing
+                }
                 
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
@@ -142,9 +167,8 @@ public partial class TilesPage : Page
         }
     }
 
-    private void OnSearchTextChanged(object sender, KeyEventArgs keyEventArgs)
+    private void FilterEpisodes(TextBox searchBar)
     {
-        TextBox searchBar = sender as TextBox;
         string searchText = searchBar?.Text;
 
         if (string.IsNullOrEmpty(searchText))
@@ -157,7 +181,14 @@ public partial class TilesPage : Page
         FilteredVideoTiles = new List<VideoTile>();
 
         string tagString;
-        string[] commands = searchText.Split(' ');
+        string pattern = @"[+-](""[^""]+""|\S+)|\b\w+\b";
+        // Improved pattern to correctly match quoted strings and other tokens.
+
+        var matches = Regex.Matches(searchText, pattern);
+
+        // Convert the matches to a string array
+        string[] commands = matches.Cast<Match>().Select(m => m.Value).ToArray();
+        // Convert the matches to a string array
 
         foreach (var command in commands)
         {
@@ -222,15 +253,14 @@ public partial class TilesPage : Page
                     if (!FilteredVideoTiles.Any())
                     {
                         var filteredTiles = AllVideoTiles
-                            .Where(videoTileIter => videoTileIter.Title.ToLower().Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                            .Where(videoTileIter => videoTileIter.Title.ToLower().Contains(command.ToLower(), StringComparison.OrdinalIgnoreCase))
                             .ToList();
                         FilteredVideoTiles.AddRange(filteredTiles);
                     }
                     else
                     {
-                        searchText = searchText.ToLower();
                         var filteredTiles = FilteredVideoTiles
-                            .Where(videoTileIter => videoTileIter.Title.ToLower().Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                            .Where(videoTileIter => videoTileIter.Title.ToLower().Contains(command.ToLower(), StringComparison.OrdinalIgnoreCase))
                             .ToList();
                         FilteredVideoTiles = filteredTiles;
                     }
@@ -241,4 +271,102 @@ public partial class TilesPage : Page
         DataContext = FilteredVideoTiles;
     }
 
+    private void OnSearchTextChanged(object sender, KeyEventArgs keyEventArgs)
+    {
+        TextBox searchBar = sender as TextBox;
+        FilterEpisodes(searchBar);
+
+    }
+
+    private void TilesContentControl_Loaded(object sender, RoutedEventArgs e)
+    {
+        // Cast the sender to a ContentControl
+        ContentControl contentControl = sender as ContentControl;
+
+        if (contentControl != null)
+        {
+            // Find all buttons inside the ContentControl
+            foreach (Button button in FindVisualChildren<Button>(contentControl))
+            {
+                // Check if the button has a Tag and if the Tag is "TagElement"
+                if (button.Tag != null && button.Tag.ToString() == "TagElement")
+                {
+                    // Attach the click event to the button
+                    button.Click += Button_Click;
+                }
+            }
+        }
+    }
+
+// Helper method to recursively search for all visual children of a specific type (Button in this case)
+    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+    {
+        if (depObj != null)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                if (child != null && child is T)
+                {
+                    yield return (T)child;
+                }
+
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                {
+                    yield return childOfChild;
+                }
+            }
+        }
+    }
+
+
+
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        Button clickedButton = sender as Button;
+        if (clickedButton != null && clickedButton.Content != null)
+        {
+            string button_text = clickedButton.Content.ToString().ToLower();
+            if (!SearchBar.Text.Contains(button_text))
+            {
+                if (string.IsNullOrEmpty(SearchBar.Text))
+                {
+
+                    if (button_text.Contains(' '))
+                    {
+                        SearchBar.Text = $"+\"{button_text}\"";
+                    }
+                    else
+                    {
+                        SearchBar.Text = $"+{button_text}";
+                    }
+                }
+                else
+                {
+                    if (button_text.Contains(' '))
+                    {
+                        SearchBar.Text += $" +\"{button_text}\"";
+                    }
+                    else
+                    {
+                        SearchBar.Text += $" +{button_text}";
+                    }
+                }
+            }
+           
+        }
+        
+        FilterEpisodes(SearchBar);
+    }
+
+    public override Dictionary<string, object> GetPageState()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void RestorePageState(Dictionary<string, object> state)
+    {
+        throw new NotImplementedException();
+    }
 }

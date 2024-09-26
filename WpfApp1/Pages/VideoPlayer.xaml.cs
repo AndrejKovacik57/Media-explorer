@@ -2,11 +2,13 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using WpfApp1.Models;
 
 namespace WpfApp1.Pages
 {
-    public partial class VideoPlayer : Page
+    public partial class VideoPlayer : CustomBasePage
     {
         public string[] VideoPaths { get; private set; }
         public string SelectedVideoPath { get; private set; }
@@ -15,7 +17,6 @@ namespace WpfApp1.Pages
         private bool isDragging = false; // To prevent conflicts when the user drags the slider
         private int currentIndex;
         private DispatcherTimer timer; // For updating the timeline slider
-        
 
         public VideoPlayer(string videoPath, string[] videoPaths)
         {
@@ -35,8 +36,14 @@ namespace WpfApp1.Pages
             timer.Tick += Timer_Tick;
             timer.Start();
             MediaPlayer.MediaEnded += MediaPlayer_MediaEnded; // Subscribe to the MediaEnded event
+            FadeOutAtStart(new DoubleAnimation(0, TimeSpan.FromMilliseconds(300)));
         }
 
+        async private void FadeOutAtStart(DoubleAnimation fadeOut)
+        {
+            await Task.Delay(4000);
+            ControlPanel.BeginAnimation(StackPanel.OpacityProperty, fadeOut);
+        }
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (MediaPlayer.NaturalDuration.HasTimeSpan && !isDragging)
@@ -182,6 +189,31 @@ namespace WpfApp1.Pages
         {
             isDragging = false; // User finished dragging, resume normal timeline updates
             MediaPlayer.Position = TimeSpan.FromSeconds(TimelineSlider.Value);
+        }
+        private void ControlPanel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // Show the control panel when the mouse enters
+            DoubleAnimation fadeIn = new DoubleAnimation(1, TimeSpan.FromMilliseconds(300));
+
+            ControlPanel.BeginAnimation(StackPanel.OpacityProperty, fadeIn);
+        }
+
+        private void ControlPanel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Hide the control panel when the mouse leaves
+            DoubleAnimation fadeOut = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300));
+
+            ControlPanel.BeginAnimation(StackPanel.OpacityProperty, fadeOut);
+        }
+
+        public override Dictionary<string, object> GetPageState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RestorePageState(Dictionary<string, object> state)
+        {
+            throw new NotImplementedException();
         }
     }
 }

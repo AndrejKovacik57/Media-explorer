@@ -7,7 +7,7 @@ using WpfApp1.Pages;
 
 namespace WpfApp1;
 
-public partial class EpisodesPage : Page, INotifyPropertyChanged
+public partial class EpisodesPage : CustomBasePage, INotifyPropertyChanged
 {
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -83,4 +83,15 @@ public partial class EpisodesPage : Page, INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    public override Dictionary<string, object> GetPageState()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void RestorePageState(Dictionary<string, object> state)
+    {
+        throw new NotImplementedException();
+    }
+    
 }

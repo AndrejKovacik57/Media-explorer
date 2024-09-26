@@ -38,8 +38,34 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="#501865" CornerRadius="3" Margin="2" Padding="2">
-                                <TextBlock Text="{Binding}" FontSize="12" Foreground="#cecccd"/>
+                            <Border Background="#501865" 
+                                    CornerRadius="
+                            3" Margin="2" 
+                                    Padding="2">
+                                <Button Content="{Binding}" 
+                                        FontSize="12" 
+                                        Foreground="#cecccd" 
+                                        BorderThickness="0" 
+                                        Background="#501865"
+                                        Tag="TagElement">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Name="border" Background="{TemplateBinding Background}" 
+                                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" 
+                                                    CornerRadius="3">
+                                                <!-- Use Margin instead of Padding -->
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                  Margin="{TemplateBinding Padding}" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="#501865"/> <!-- Darker color on hover -->
+                                                    <Setter Property="Cursor" Value="Hand"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

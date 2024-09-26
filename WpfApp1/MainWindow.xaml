@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         Title="MainWindow" Height="1200" Width="1350" Background="#FF18002F">
+        <!--Custom forward backward -->
+        
         <!-- Frame to host the Page -->
-        <Frame Name="TilesFrame" Source="Pages/TilesPage.xaml" />
+        <Frame Name="TilesFrame" Source="Pages/TilesPage.xaml"  /><!--NavigationUIVisibility="Hidden"-->
 </Window>
