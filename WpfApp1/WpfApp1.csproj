@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="aaa\" />
+      <PackageReference Include="Sharpcaster" Version="1.2.2" />
     </ItemGroup>
 
 </Project>

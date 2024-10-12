@@ -5,24 +5,40 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using WpfApp1.Models;
-
+using Sharpcaster.Models;
+using System.Net;
+using System.Net.Sockets;
+using Sharpcaster;
+using Sharpcaster.Interfaces;
+using Sharpcaster.Models.Media;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 namespace WpfApp1.Pages
+
 {
     public partial class VideoPlayer : CustomBasePage
     {
         public string[] VideoPaths { get; private set; }
         public string SelectedVideoPath { get; private set; }
-        private bool isPlaying = true;
+        private bool isPlaying;
         private bool isFullScreen = false;
         private bool isDragging = false; // To prevent conflicts when the user drags the slider
         private int currentIndex;
         private DispatcherTimer timer; // For updating the timeline slider
+        private readonly string ipAddress;
+        private const string Port = "5000";
+        private ChromecastClient? chromecastClient;
+        private MediaServer? localMediaServer;
+
+
+        // private List<ChromecastDevice> chromecastDevices;
 
         public VideoPlayer(string videoPath, string[] videoPaths)
         {
             InitializeComponent();
             VideoPaths = videoPaths;
             SelectedVideoPath = videoPath;
+            ipAddress = GetLocalIpAddress();
             currentIndex = Array.IndexOf(VideoPaths, SelectedVideoPath);
             MediaPlayer.Source = new Uri(SelectedVideoPath, UriKind.Absolute);
             MediaPlayer.Play(); // Add this line to start playing automatically.
@@ -33,11 +49,14 @@ namespace WpfApp1.Pages
             // Create and start the timer to update the slider
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500); // Update every half-second
-            timer.Tick += Timer_Tick;
+            timer.Tick += Timer_Tick!;
             timer.Start();
             MediaPlayer.MediaEnded += MediaPlayer_MediaEnded; // Subscribe to the MediaEnded event
             FadeOutAtStart(new DoubleAnimation(0, TimeSpan.FromMilliseconds(300)));
+            // Display available Chromecast devices for selection
+
         }
+
 
         async private void FadeOutAtStart(DoubleAnimation fadeOut)
         {
@@ -206,6 +225,131 @@ namespace WpfApp1.Pages
             ControlPanel.BeginAnimation(StackPanel.OpacityProperty, fadeOut);
         }
 
+        async public void ChromecastButtonLoad_Click(object sender, RoutedEventArgs e)
+        {
+            IChromecastLocator locator = new MdnsChromecastLocator();
+            var source = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500));
+
+            try
+            {
+                // Find available Chromecast devices
+                var chromecasts = await locator.FindReceiversAsync(source.Token);
+
+                var chromecastReceivers = chromecasts.ToList();
+                if (chromecastReceivers.Any())
+                {
+                    // Populate ComboBox with Chromecast devices
+                    ChromecastDevicesComboBox.ItemsSource = chromecastReceivers;
+                    ChromecastDevicesComboBox.SelectedIndex = 0;  // Optionally set default selection
+                    ChromecastDevicesComboBox.Visibility = Visibility.Visible;
+                    ChromecastToDevice.IsEnabled = true;
+                    ChromecastToDevice.Visibility = Visibility.Visible;
+
+                }
+                else
+                {
+                    MessageBox.Show("No Chromecast devices found.");
+                    ChromecastDevicesComboBox.ItemsSource = null;
+                    ChromecastDevicesComboBox.Visibility = Visibility.Collapsed;
+                    ChromecastToDevice.IsEnabled = false;
+                    ChromecastToDevice.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while finding Chromecast devices: {ex.Message}");
+            }
+        }
+  
+        async void ChromecastToDeviceButton_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            if (ChromecastDevicesComboBox.SelectedItem is ChromecastReceiver selectedChromecast)
+            {
+                Console.WriteLine($"Connecting to {selectedChromecast.Name}...");
+                Console.WriteLine($"localIpAddress {ipAddress}");
+                
+                localMediaServer = new MediaServer();
+                localMediaServer.StartServer(SelectedVideoPath, Port);
+                
+                chromecastClient = new ChromecastClient();
+                await chromecastClient.ConnectChromecast(selectedChromecast);
+                var launchResult = await chromecastClient.LaunchApplicationAsync("B3419EF5");
+                
+                if (launchResult == null)
+                {
+                    MessageBox.Show("Failed to launch Chromecast application.");
+                    return;
+                }
+                
+                var media = new Media
+                {
+                    ContentUrl = $"http://{ipAddress}:{Port}/"
+                };
+                _ = await chromecastClient.MediaChannel.LoadAsync(media);
+                // Show the stop cast button
+                StopCastButton.Visibility = Visibility.Visible;
+                
+                // Subscribe to the Disconnected event
+                chromecastClient.Disconnected += ChromecastClient_Disconnected;
+            }
+            else
+            {
+                MessageBox.Show("Please select a Chromecast device.");
+            }
+            
+        }
+        private async void StopCastButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (chromecastClient?.MediaChannel != null)
+            {
+                // Stop the currently playing media
+                await chromecastClient.MediaChannel.StopAsync();
+            }
+
+            if (localMediaServer != null)
+            {
+                localMediaServer.StopServer();
+                localMediaServer = null;
+            }
+            // Hide the stop cast button
+            StopCastButton.Visibility = Visibility.Hidden;
+
+            MessageBox.Show("Casting stopped.");
+        }
+        private void ChromecastClient_Disconnected(object sender, EventArgs e)
+        {
+            // This event gets triggered when Chromecast is disconnected
+
+            Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show("Casting was stopped on the TV.");
+
+                // Hide the stop cast button and stop the media server
+                StopCastButton.Visibility = Visibility.Collapsed;
+
+                if (localMediaServer != null)
+                {
+                    localMediaServer.StopServer();
+                    localMediaServer = null;
+                }
+
+                // Optionally, you can disconnect the ChromecastClient
+                chromecastClient = null;
+            });
+        }
+
+        public static string GetLocalIpAddress()
+        {
+            string localIp;
+            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+            {
+                socket.Connect("8.8.8.8", 65530);
+                IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
+                localIp = endPoint!.Address.ToString();
+            }
+            Console.WriteLine($"Addresa je  {localIp}");
+            return localIp;
+        }
         public override Dictionary<string, object> GetPageState()
         {
             throw new NotImplementedException();

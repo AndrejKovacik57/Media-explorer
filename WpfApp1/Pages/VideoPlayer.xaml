@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:models="clr-namespace:WpfApp1.Models"
       Title="VideoPlayer">
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/> <!-- This row will take the remaining available space -->
@@ -99,6 +100,43 @@
                           HorizontalAlignment="Right" 
                           VerticalAlignment="Top" 
                           Margin="10"/>
+                <Button x:Name="ChromecastButtonLoadDevices" 
+                        Content="Chromecast load devices" 
+                        Click="ChromecastButtonLoad_Click" 
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top" 
+                        Width="150" 
+                        Height="30" 
+                        Margin="10"/>
+        
+                <!-- Chromecast Devices ComboBox -->
+                <ComboBox x:Name="ChromecastDevicesComboBox"
+                          Width="150"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          Margin="10"
+                          Visibility="Hidden"
+                          DisplayMemberPath="Name"/>
+                
+                <Button x:Name="ChromecastToDevice" 
+                        Content="Chromecast to device" 
+                        Click="ChromecastToDeviceButton_Click" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" 
+                        Visibility="Hidden"
+                        Width="150" 
+                        Height="30" 
+                        IsEnabled="False"
+                        Margin="10"/>
+                <Button x:Name="StopCastButton" 
+                        Content="Stop Cast" 
+                        Click="StopCastButton_Click" 
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Visibility="Hidden"
+                        Width="150" 
+                        Height="30" 
+                        Margin="10"/>
 
             </StackPanel>
         </StackPanel>
