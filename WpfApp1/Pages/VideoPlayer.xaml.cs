@@ -30,7 +30,6 @@ namespace WpfApp1.Pages
         private ChromecastClient? chromecastClient;
         private MediaServer? localMediaServer;
 
-
         // private List<ChromecastDevice> chromecastDevices;
 
         public VideoPlayer(string videoPath, string[] videoPaths)
@@ -151,31 +150,43 @@ namespace WpfApp1.Pages
 
         private void EnterFullScreen()
         {
-            Window fullScreenWindow = new Window
+            
+            MainWindow? mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            if (mainWindow != null)
             {
-                Content = this.Content,
-                WindowState = WindowState.Maximized,
-                WindowStyle = WindowStyle.None,
-                Topmost = true
-            };
+                mainWindow.WindowState = WindowState.Normal; // Reset to normal first to apply correct dimensions
+                mainWindow.WindowStyle = WindowStyle.None;   // Hide window border and title bar
+                mainWindow.ResizeMode = ResizeMode.NoResize; // Disable resizing
+                mainWindow.Topmost = true;                   // Ensure it's above the taskbar
+                mainWindow.Left = 0;                         // Align to the left side of the screen
+                mainWindow.Top = 0;                          // Align to the top of the screen
+                mainWindow.Width = SystemParameters.PrimaryScreenWidth;   // Set window width to match the screen width
+                mainWindow.Height = SystemParameters.PrimaryScreenHeight; // Set window height to match the screen height
+                mainWindow.WindowState = WindowState.Maximized;           // Maximize the window
+        
+                isFullScreen = true;
+            }
 
-            fullScreenWindow.KeyDown += (s, e) =>
-            {
-                if (e.Key == Key.Escape)
-                {
-                    ExitFullScreen(fullScreenWindow);
-                }
-            };
-
-            fullScreenWindow.Show();
-            isFullScreen = true;
         }
 
-        private void ExitFullScreen(Window fullScreenWindow = null)
+        private void ExitFullScreen()
         {
-            if (fullScreenWindow != null)
+            MainWindow? mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            if (mainWindow != null)
             {
-                fullScreenWindow.Close();
+                mainWindow.WindowState = WindowState.Normal;                // Restore the window state
+                mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;     // Restore the window style with borders
+                mainWindow.ResizeMode = ResizeMode.CanResize;                // Enable resizing again
+                mainWindow.Topmost = false;                                 // Disable always on top
+                var workingArea = SystemParameters.WorkArea;
+        
+                // Ensure window is within bounds of the working area
+                mainWindow.Width = Math.Min(mainWindow.Width, workingArea.Width);
+                mainWindow.Height = Math.Min(mainWindow.Height, workingArea.Height);
+
+                // Set the position to respect the working area (top-left corner)
+                mainWindow.Left = workingArea.Left;
+                mainWindow.Top = workingArea.Top;
             }
 
             isFullScreen = false;

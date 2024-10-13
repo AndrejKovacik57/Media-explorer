@@ -4,7 +4,7 @@ using System.IO;
 
 public class MediaServer
 {
-    private HttpListener _listener;
+    private HttpListener? _listener;
     private bool _isRunning;
 
     public void StartServer(string videoFilePath, string port)
