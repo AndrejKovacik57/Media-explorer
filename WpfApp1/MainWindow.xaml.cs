@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WpfApp1.Models;
-using WpfApp1.Viewmodels;
+using WpfApp1.ViewModels;
 
 
 namespace WpfApp1;
@@ -19,8 +19,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        ViewModelBase vm = new MainWindowViewModel();
-        DataContext = vm;
     }
 
 

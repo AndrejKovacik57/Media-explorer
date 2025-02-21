@@ -13,8 +13,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\Images\png-placeholder.png" />
-      <Resource Include="Resources\Images\png-placeholder.png" />
+        <None Remove="Resources\Images\png-placeholder.png" />
+        <Resource Include="Resources\Images\png-placeholder.png" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <None Remove="Resources\Images\image-picture-svgrepo-com.svg" />
+        <Resource Include="Resources\Images\image-picture-svgrepo-com.svg" />
     </ItemGroup>
 
     <ItemGroup>

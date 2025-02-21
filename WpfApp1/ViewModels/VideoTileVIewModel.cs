@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using WpfApp1.Commands;
 using WpfApp1.Models;
+using WpfApp1.MVVM;
 
 namespace WpfApp1.Viewmodels;
 
@@ -17,7 +20,7 @@ internal class VideoTileViewModel : ViewModelBase
     public int EpisodeNumber => _videoTile.EpisodeNumber;
     public ObservableCollection<string> Tags => new ObservableCollection<string>(_videoTile.Tags);
 
-
+    public ICommand ShowEpisodes => new SowEpisodesCommand();
     public BitmapImage Image
     {
         get

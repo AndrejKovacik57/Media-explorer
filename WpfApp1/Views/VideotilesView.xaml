@@ -3,29 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:WpfApp1">
-      <UserControl.Resources>
+             xmlns:local="clr-namespace:WpfApp1.ViewModels" 
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:VideoTilesViewModel}">
+    
+    <UserControl.Resources>
+        
         <DataTemplate x:Key="TileTemplate">
             <Grid 
                 Background="#3f0e65"
                 Width="300"
                 Height="300">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
             
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
             
                 <Image x:Name="Thumbnail"
                        Source="{Binding Image}"
                        Width="150"
                        Height="300"
-                       Stretch="UniformToFill"
+                       Stretch="Uniform"
                        Grid.Row="0" Grid.Column="0" />
             
                 <StackPanel
@@ -67,18 +70,20 @@
                         </ItemsControl>
                     </WrapPanel>
                 </StackPanel>
-            
-                <!-- Bottom Action Button -->
+                
                 <Button
-                    Grid.Row="2" Grid.ColumnSpan="2"
+                    Grid.Row="1" 
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
                     Content="Show Episodes"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
+                    Height="50"
                     BorderThickness="0"
                     Background="#501865"
                     Foreground="#cecccd"
                     FontSize="18"
                     Padding="0, 5"
+                    Cursor="Hand"
+                    Command="{Binding ShowEpisodes}"
                     />
             </Grid>
         </DataTemplate>
