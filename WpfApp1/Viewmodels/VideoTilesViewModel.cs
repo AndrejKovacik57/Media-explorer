@@ -36,8 +36,8 @@ internal class VideoTilesViewModel : ViewModelBase
             "Sample Title2",
             2,
             [
-                @"E:\media\videa\hentai\2D\Sex_ga_Suki_de_Suki_de_Daisuki_na_Classmate_no_Ano_Musume\sex-ga-suki-de-suki-de-daisuki-na-classmate-no-ano-musume-1.mp4",
-                @"E:\media\videa\hentai\2D\Sex_ga_Suki_de_Suki_de_Daisuki_na_Classmate_no_Ano_Musume\sex-ga-suki-de-suki-de-daisuki-na-classmate-no-ano-musume-2.mp4"
+                @"path",
+                @"path"
             ]
         );
 
